@@ -1,8 +1,15 @@
-from sqlalchemy.orm import Session
-from llama_index.core import SimpleDirectoryReader
+from llama_index.core import SimpleDirectoryReader, Settings
 from llama_index.core.node_parser import SentenceSplitter
+from llama_index.embeddings.ollama import OllamaEmbedding
 from ..models.document_chunk import DocumentChunk
 from ..core.database import SessionLocal
+from ..core.settings import get_settings
+
+settings = get_settings()
+Settings.embed_model = OllamaEmbedding(
+    model_name=settings.ollama_embed_model,
+    base_url=settings.ollama_base_url,
+)
 
 def process_document_to_chunks(file_path: str, document_id: str):
     db = SessionLocal()
@@ -17,10 +24,13 @@ def process_document_to_chunks(file_path: str, document_id: str):
 
         # Guardamos cada trozo en la tabla document_chunks
         for node in nodes:
+            # Generamos el vector para este fragmento de texto
+            vector = Settings.embed_model.get_text_embedding(node.get_content()) 
+            
             new_chunk = DocumentChunk(
                 document_id=document_id,
                 content=node.text,
-                embedding=None
+                embedding=vector
             )
             db.add(new_chunk)
         

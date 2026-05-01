@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     # DB
     database_url: str | None = Field(default=None)
 
+    # Ollama
+    ollama_base_url: str = Field(default="http://ollama:11434")
+    ollama_embed_model: str = Field(default="nomic-embed-text")
+
     class Config:
         env_file = "./.env"
         env_file_encoding = "utf-8"
