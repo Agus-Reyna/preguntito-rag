@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     # Rutas HTTP
     api_prefix: str = Field(default="/api")
     documents_prefix: str = Field(default="/documents")
+    queries_prefix: str = Field(default="/queries") 
 
     # Paths
     base_dir: Path = Field(default_factory=lambda: Path(__file__).resolve().parents[2])
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
     # Ollama
     ollama_base_url: str = Field(default="http://ollama:11434")
     ollama_embed_model: str = Field(default="nomic-embed-text")
+    ollama_llm_model: str = Field(default="llama3.2:3b")
 
     class Config:
         env_file = "./.env"
