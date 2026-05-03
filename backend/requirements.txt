@@ -11,3 +11,4 @@ httpx>=0.27
 llama-index-core>=0.11.0
 llama-index-embeddings-ollama>=0.1.5
 llama-index-readers-file>=0.1.15
+ollama>=0.2.1
