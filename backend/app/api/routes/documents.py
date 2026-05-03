@@ -1,20 +1,18 @@
 import shutil
 from pathlib import Path
 import uuid
-from fastapi import APIRouter, BackgroundTasks, Depends, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.orm import Session
 from ...core.database import get_db
 from ...core.settings import get_settings
 from ...models.document import Document
 from ...schemas.document import DocumentResponse
-from ...services.rag_service import process_document_to_chunks
-
+from ...services.rag_service import RAGService
 router = APIRouter()
 
 @router.post("", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
 async def upload_document(
     session_id: str,
-    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ) -> DocumentResponse:
@@ -57,11 +55,7 @@ async def upload_document(
         db.commit()
         db.refresh(doc)
 
-        background_tasks.add_task(
-            process_document_to_chunks,
-            str(dest_path),
-            doc.id,
-        )
+        RAGService.process_document_to_chunks(str(dest_path), doc.id)
 
         return doc
     except Exception as e:
