@@ -10,7 +10,9 @@ from ...schemas.document import DocumentResponse
 from ...services.rag_service import RAGService
 router = APIRouter()
 
-@router.post("", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=DocumentResponse, status_code=status.HTTP_201_CREATED,
+    summary="Subir documento PDF",
+    description="Sube un PDF, lo guarda en disco, lo registra en la DB y genera embeddings para RAG.")
 async def upload_document(
     session_id: str,
     file: UploadFile = File(...),
@@ -66,7 +68,9 @@ async def upload_document(
             detail=f"Error al registrar el documento en la base de datos: {str(e)}"
         )
 
-@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT,
+    summary="Eliminar documento",
+    description="Elimina el documento de la DB, sus chunks y el archivo del disco.")
 async def delete_document(
         document_id: str,
         db: Session = Depends(get_db),
