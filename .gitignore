@@ -1,4 +1,13 @@
-# --- Python ---
+# --- Node / Frontend (React) ---
+**/node_modules/
+**/dist/
+**/build/
+**.env.local
+**.env.development.local
+**.env.test.local
+**.env.production.local
+
+# --- Python / Backend (FastAPI) ---
 **/__pycache__/
 **/*.py[cod]
 **/*.pyd
@@ -8,17 +17,24 @@
 **/.coverage
 **/htmlcov/
 
-# --- Virtual envs ---
+# --- Entornos Virtuales ---
 **/.venv/
 **/venv/
 **/ENV/
+**/env/
 
-# --- OS / editor ---
+# --- Sistema / Editores ---
 .DS_Store
 **/.vscode/
+**/.idea/
+*.swp
+*.swo
 
-# --- App data ---
+# --- Datos de la App (Vectores y PDF) ---
 **/data/uploads/
+**/data/vector_db/
+**/*.db
+**/*.sqlite3
 
-# --- Secrets ---
+# --- Secretos y Variables de Entorno ---
 **/.env
