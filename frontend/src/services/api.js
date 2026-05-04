@@ -20,6 +20,10 @@ export const uploadDocument = async (file, sessionId, onProgress) => {
   return response.data
 }
 
+export const deleteDocument = async (documentId) => {
+  await api.delete(`/documents/${documentId}`)
+}
+
 export const askQuestion = async (query, sessionId) => {
   const response = await api.post(`/queries/ask?session_id=${sessionId}&query=${encodeURIComponent(query)}`)
   return response.data
