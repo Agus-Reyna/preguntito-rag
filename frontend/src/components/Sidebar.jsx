@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useStore } from '../store/useStore'
-import { uploadDocument } from '../services/api'
+import { uploadDocument, deleteDocument } from '../services/api'
 
 function FileIcon() {
   return (
@@ -43,29 +43,40 @@ export default function Sidebar() {
   const [dragOver, setDragOver] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
-const handleUpload = async (file) => {
-  if (!file || !file.name.endsWith('.pdf')) return
+  const handleUpload = async (file) => {
+    if (!file || !file.name.endsWith('.pdf')) return
 
-  const activeSession = sessionId.trim() || 'mi-sesion'
-  useStore.setState({ sessionId: activeSession })
+    const activeSession = sessionId.trim() || 'mi-sesion'
+    useStore.setState({ sessionId: activeSession })
 
-  setUploading(true)
-  setProgress(0)
-  try {
-    const doc = await uploadDocument(file, activeSession, setProgress)
-    addDocument({ ...doc, name: file.name })
-  } catch (e) {
-    console.error('Error subiendo PDF:', e)
-  } finally {
-    setUploading(false)
+    setUploading(true)
     setProgress(0)
-    if (fileRef.current) fileRef.current.value = '';
+    try {
+      const doc = await uploadDocument(file, activeSession, setProgress)
+      addDocument({ ...doc, name: file.name })
+    } catch (e) {
+      console.error('Error subiendo PDF:', e)
+    } finally {
+      setUploading(false)
+      setProgress(0)
+      if (fileRef.current) fileRef.current.value = ''
+    }
   }
-}
+
+  const handleRemove = async (doc) => {
+    try {
+      await deleteDocument(doc.id)
+      removeDocument(doc.id)
+    } catch (e) {
+      console.error('Error eliminando documento:', e)
+    }
+  }
 
   const handleDrop = (e) => {
     e.preventDefault()
     setDragOver(false)
+    const activeSession = sessionId.trim() || 'mi-sesion'
+    if (!sessionId.trim()) useStore.setState({ sessionId: activeSession })
     handleUpload(e.dataTransfer.files[0])
   }
 
@@ -124,7 +135,13 @@ const handleUpload = async (file) => {
           onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
-          onClick={() => !isUploading && fileRef.current?.click()}
+          onClick={() => {
+            if (!isUploading) {
+              const activeSession = sessionId.trim() || 'mi-sesion'
+              if (!sessionId.trim()) useStore.setState({ sessionId: activeSession })
+              fileRef.current?.click()
+            }
+          }}
           className={`
             relative cursor-pointer rounded-lg border-2 border-dashed p-4 text-center transition-all duration-200
             ${dragOver ? 'border-accent bg-card scale-[1.02]' : 'border-theme hover:border-accent hover:bg-card'}
@@ -156,15 +173,15 @@ const handleUpload = async (file) => {
             </>
           )}
         </div>
-        <input 
-          ref={fileRef} 
-          type="file" 
-          accept=".pdf" 
-          className="hidden" 
+        <input
+          ref={fileRef}
+          type="file"
+          accept=".pdf"
+          className="hidden"
           onChange={(e) => {
-            handleUpload(e.target.files[0]);
-            e.target.value = '';
-          }} 
+            handleUpload(e.target.files[0])
+            e.target.value = ''
+          }}
         />
       </div>
 
@@ -185,7 +202,10 @@ const handleUpload = async (file) => {
               <div key={doc.id} className="group flex items-center gap-2 p-2 rounded-lg bg-card border border-theme hover:border-accent transition-all animate-fadeIn">
                 <span className="text-accent shrink-0"><FileIcon /></span>
                 <span className="text-xs text-secondary truncate flex-1 font-body">{doc.name}</span>
-                <button onClick={() => removeDocument(doc.id)} className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-400 transition-all shrink-0">
+                <button
+                  onClick={() => handleRemove(doc)}
+                  className="opacity-0 group-hover:opacity-100 text-muted hover:text-red-400 transition-all shrink-0"
+                >
                   <TrashIcon />
                 </button>
               </div>
