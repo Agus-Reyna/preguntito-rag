@@ -1,5 +1,6 @@
 import { useStore } from '../store/useStore'
 import RobertitoAvatar from './RobertitoAvatar'
+import { deleteDocument } from '../services/api'
 
 function SunIcon() {
   return (
@@ -33,6 +34,16 @@ function RefreshIcon() {
 export default function Header() {
   const { isDark, toggleTheme, documents, resetSession, isUploading, isThinking } = useStore()
 
+  const handleReset = async () => {
+    try {
+      await Promise.all(documents.map(doc => deleteDocument(doc.id)))
+    } catch (e) {
+      console.error('Error eliminando documentos:', e)
+    } finally {
+      resetSession()
+    }
+  }
+  
   return (
     <header className="h-16 shrink-0 flex items-center justify-between px-8 border-b border-theme bg-secondary">
       <div className="flex items-center gap-4">
@@ -49,7 +60,7 @@ export default function Header() {
 
       <div className="flex items-center gap-4">
         <button
-          onClick={!isUploading && !isThinking ? resetSession : undefined}
+          onClick={!isUploading && !isThinking ? handleReset : undefined}
           disabled={isUploading || isThinking}
           title={isUploading ? 'Esperá que termine de cargar' : isThinking ? 'Esperá la respuesta' : 'Nueva sesión'}
           className={`w-9 h-9 rounded-lg flex items-center justify-center border border-theme transition-all
