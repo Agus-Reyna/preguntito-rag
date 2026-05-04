@@ -65,3 +65,21 @@ async def upload_document(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error al registrar el documento en la base de datos: {str(e)}"
         )
+
+@router.delete("/{document_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_document(
+        document_id: str,
+        db: Session = Depends(get_db),
+):
+        doc = db.get(Document, document_id)
+        if not doc:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+        
+        # Borramos el archivo del disco
+        file_path = Path(doc.file_path)
+        if file_path.exists():
+            file_path.unlink()
+        
+        # Borramos de la DB (los chunks se borran en cascada si configuraste cascade)
+        db.delete(doc)
+        db.commit()
