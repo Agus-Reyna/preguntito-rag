@@ -9,6 +9,11 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark)
+
+    const favicon = document.getElementById('dynamic-favicon')
+    if (favicon) {
+      favicon.href = isDark ? '/favicon-dark.svg' : '/favicon-light.svg'
+    }
   }, [isDark])
 
   useEffect(() => {
