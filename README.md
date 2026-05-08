@@ -50,8 +50,8 @@ Por defecto todo corre en CPU, con tiempos de respuesta de 2-3 minutos por pregu
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/preguntito.git
-cd preguntito
+git clone https://github.com/Agus-Reyna/preguntito-rag
+cd preguntito-rag
 ```
 
 ### 2. Configurar el `.env`
@@ -76,6 +76,18 @@ OLLAMA_EMBED_MODEL=nomic-embed-text
 # === IMAGEN DE OLLAMA ===
 OLLAMA_IMAGE=ollama/ollama
 ```
+
+#### 💡 ¿Querés usar otro modelo?
+
+Por defecto PregunTito usa `llama3.2:3b`. Si querés usar un modelo más grande o diferente, cambiá la variable en el `.env`:
+
+```env
+OLLAMA_LLM_MODEL=llama3.1:8b
+```
+
+Ollama va a descargar el modelo automáticamente la primera vez que levantes los servicios. Podés ver los modelos disponibles en [ollama.com/library](https://ollama.com/library).
+
+> ⚠️ Modelos más grandes requieren más RAM y son más lentos en CPU. Se recomienda GPU para modelos de 7B o más.
 
 ### 3. Levantar los servicios
 
@@ -303,8 +315,8 @@ By default everything runs on CPU, with response times of 2-3 minutes per questi
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/preguntito.git
-cd preguntito
+git clone https://github.com/Agus-Reyna/preguntito-rag
+cd preguntito-rag
 ```
 
 ### 2. Configure `.env`
@@ -329,6 +341,18 @@ OLLAMA_EMBED_MODEL=nomic-embed-text
 # === OLLAMA IMAGE ===
 OLLAMA_IMAGE=ollama/ollama
 ```
+
+#### 💡 Do you want to use a different model?
+
+By default PregunTito uses `llama3.2:3b`. If you want to use a larger or different model, change the variable in your `.env`:
+
+```env
+OLLAMA_LLM_MODEL=llama3.1:8b
+```
+
+Ollama will automatically download the model the first time you start the services. You can browse available models at [ollama.com/library](https://ollama.com/library).
+
+> ⚠️ Larger models require more RAM and are slower on CPU. GPU is recommended for models with 7B parameters or more.
 
 ### 3. Start the services
 
